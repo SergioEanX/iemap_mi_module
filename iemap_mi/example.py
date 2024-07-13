@@ -21,7 +21,7 @@ async def main():
 
     # Fetch paginated project data
     projects = await client.project_handler.get_projects(page_size=10, page_number=1)
-    print(projects)
+    print(projects.model_dump())
 
     client.stat_handler.get_stats()
 

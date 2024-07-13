@@ -43,18 +43,21 @@ class IemapMI:
 
     async def authenticate(self, username: str, password: str) -> None:
         """
-        Authenticate the user and obtain a JWT token.
+           Authenticate the user and obtain a JWT token.
 
-        Args:
-            username (str): Username for authentication.
-            password (str): Password for authentication.
-        """
-        auth_data = AuthData(username=username, password=password)
+           Args:
+               username (str): Username for authentication.
+               password (str): Password for authentication.
+           """
         endpoint = 'auth/jwt/login'
         url = f"{self.base_url}/{endpoint}"
+        data = {
+            'username': username,
+            'password': password
+        }
 
         async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=auth_data.dict())
+            response = await client.post(url, data=data)
             response.raise_for_status()
             self.token = response.json().get('access_token')
             # Update the token in the project and stat handlers
