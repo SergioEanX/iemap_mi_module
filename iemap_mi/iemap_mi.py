@@ -1,5 +1,6 @@
 # iemap_mi/iemap_mi.py
-
+import asyncio
+import logging
 from typing import Optional, Dict, Any
 import httpx
 from pydantic import HttpUrl
@@ -7,6 +8,7 @@ from iemap_mi.project_handler import ProjectHandler
 from iemap_mi.iemap_stat import IemapStat
 from iemap_mi.models import AuthData
 from iemap_mi.utils import get_headers
+from iemap_mi.__version__ import __version__
 
 
 class IemapMI:
@@ -63,6 +65,27 @@ class IemapMI:
             # Update the token in the project and stat handlers
             self.project_handler.token = self.token
             self.stat_handler.token = self.token
+
+    @staticmethod
+    def handle_exception(loop: asyncio.AbstractEventLoop, context: Dict[str, Any]) -> None:
+        """
+        Handle exceptions in asyncio.
+
+        Args:
+            loop (asyncio.AbstractEventLoop): The event loop.
+            context (Dict[str, Any]): The exception context.
+        """
+        logging.error(f"Caught exception: {context['message']}")
+        exception = context.get("exception")
+        if exception:
+            logging.error(f"Exception: {exception}")
+
+    @staticmethod
+    def print_version() -> None:
+        """
+        Print the version of the IemapMI module.
+        """
+        print(f"IemapMI version: {__version__}")
 
     async def get_example_data(self) -> Any:
         """
