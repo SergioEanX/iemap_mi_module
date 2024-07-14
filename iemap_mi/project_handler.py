@@ -4,12 +4,12 @@ from pydantic import TypeAdapter, ValidationError
 from typing import Optional, Dict, Any, Union, List
 from iemap_mi.models import (ProjectResponse, CreateProjectRequest, CreateProjectResponse,
                              ProjectQueryModel)
-from settings import settings
+from iemap_mi.settings import settings
 from iemap_mi.utils import get_headers
 
 
 class ProjectHandler:
-    def __init__(self, base_url: str, token: Optional[str] = None) -> None:
+    def __init__(self, token: Optional[str] = None) -> None:
         """
         Initialize ProjectHandler with base URL and JWT token.
 
@@ -87,8 +87,8 @@ class ProjectHandler:
                 response.raise_for_status()
                 return response.json()
 
+    @staticmethod
     async def query_projects(
-            self,
             response_model: Optional[str] = None,
             id: Optional[str] = None,
             fields_output: Optional[str] = 'all',
@@ -117,6 +117,8 @@ class ProjectHandler:
     ) -> List[ProjectQueryModel]:
         """
         Query projects with specified parameters.
+        This method is a static method and does not require an instance of the class to be called.
+        No authentication is required to call this method.
 
         Args:
             response_model (Optional[str]): Response model.
@@ -178,7 +180,6 @@ class ProjectHandler:
                 "end_date": end_date,
             }.items() if value is not None
         }
-        # headers = get_headers(self.token)
 
         async with httpx.AsyncClient() as client:
             response = await client.get(endpoint, params=params)
@@ -192,9 +193,3 @@ class ProjectHandler:
         except ValidationError as e:
             print("Validation error occurred:")
             print(e.json(indent=4))
-
-        # try:
-        #     return results
-        # except Exception as e:
-        #     logging.error(f"Error parsing response: {e}")
-        #     return response.json()
