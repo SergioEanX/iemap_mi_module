@@ -8,7 +8,6 @@ from iemap_mi.models import (CreateProjectRequest, Project, Material, Process, A
                              Parameter, Property, FlattenedProjectBase, FlattenedProjectHashEmail)
 from iemap_mi.utils import flatten_project_data
 
-
 try:
     import pandas as pd
 
@@ -29,7 +28,6 @@ async def iterate_projects(client: IemapMI, page_size: int = 40, show_email: boo
     page_number = 1
     all_projects: List[FlattenedProjectBase] = []
     total_projects = None  # Initialize total_projects to None
-    adapter = TypeAdapter(FlattenedProjectBase)
 
     while True:
         projects_response = await client.project_handler.get_projects(page_size=page_size, page_number=page_number)
@@ -42,11 +40,6 @@ async def iterate_projects(client: IemapMI, page_size: int = 40, show_email: boo
             adapter = TypeAdapter(FlattenedProjectHashEmail)
 
         projects = [adapter.validate_python(project) for project in projects_response.data]
-
-        # if show_email:
-        #     projects = [p.validate_python(project) for project in projects_response.data]
-        # else:
-        #     projects = [p.validate_python(project) for project in projects_response.data]
 
         all_projects.extend(projects)
         page_number += 1
@@ -91,7 +84,7 @@ async def main():
         limit=10
     )
 
-    print(query_response)
+    print([doc.model_dump() for doc in query_response])
 
     # Prompt for username and password
     username = input("Enter your username (email address): ")
