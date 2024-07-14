@@ -1,9 +1,17 @@
 [tool.poetry]
 name = "iemap-mi"
-version = "0.1.0"
+version = "0.1.2"
 description = "A Python module to interact with the IEMAP REST API"
 authors = ["Sergio Ferlito <sergio.ferlito@enea.it>"]
 readme = "README.md"
+packages = [
+    { include = "iemap_mi" }
+]
+
+# Add this section
+include = [
+    "images/*"
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
