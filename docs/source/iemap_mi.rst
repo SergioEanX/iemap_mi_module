@@ -11,7 +11,7 @@ iemap\_mi.example module
    :members:
    :undoc-members:
    :show-inheritance:
-   :noindex:
+
 
 iemap\_mi.iemap\_mi module
 --------------------------
@@ -29,7 +29,7 @@ iemap\_mi.iemap\_stat module
    :members:
    :undoc-members:
    :show-inheritance:
-   :noindex:
+
 
 iemap\_mi.models module
 -----------------------
@@ -47,7 +47,7 @@ iemap\_mi.project\_handler module
    :members:
    :undoc-members:
    :show-inheritance:
-   :noindex:
+
 
 iemap\_mi.settings module
 -------------------------
@@ -74,4 +74,4 @@ Module contents
    :members:
    :undoc-members:
    :show-inheritance:
-   :noindex:
+

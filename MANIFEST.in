@@ -2,9 +2,3 @@ include pyproject.toml
 include README.md
 recursive-include docs *
 
-
-
-WARNING: Failed guarded type import with ImportError
-("cannot import name 'AbstractSetIntStr' from 'pydantic._internal._utils'
- (/home/eanx/PycharmProjects/iemap-mi/.venv/lib/python3.10/site-packages/pydantic/_internal/_utils.py)")
-
