@@ -1,7 +1,7 @@
 # iemap_mi/models.py
 
-from pydantic import BaseModel, constr, EmailStr, field_validator
-from typing import List, Optional, Any, Dict
+from pydantic import BaseModel, constr, EmailStr, field_validator, RootModel
+from typing import List, Optional, Any, Dict, Union
 from datetime import datetime
 
 from iemap_mi._utils_hash import hash_email
@@ -236,8 +236,8 @@ class Output(BaseModel):
 class MaterialModel(BaseModel):
     formula: str
     elements: List[str]
-    input: Optional[Input]
-    output: Optional[Output]
+    input: Optional[Input] = None
+    output: Optional[Output] = None
 
 
 class FlattenedProjectBase(BaseModel):
@@ -253,3 +253,60 @@ class FlattenedProjectBase(BaseModel):
 
 class FlattenedProjectHashEmail(FlattenedProjectBase):
     provenance: ProvenanceHashEmail
+
+
+# Model to use in free the queries
+class FileModel(BaseModel):
+    hash: str
+    name: str
+    extention: str
+    size: Union[str, float]
+    createdAt: datetime
+    updatedAt: datetime
+
+
+class PropertyModel(BaseModel):
+    name: str
+    value: Any
+    unit: Optional[str] = None
+
+
+class ParameterModel(BaseModel):
+    name: str
+    value: Any
+    unit: Optional[str] = None
+
+
+class AgentModel(BaseModel):
+    name: str
+    version: Optional[str] = None
+
+
+class ProcessModel(BaseModel):
+    isExperiment: bool
+    method: str
+    agent: AgentModel
+
+
+class ProjectModel(BaseModel):
+    name: str
+    label: str
+    description: str
+
+
+class ProvenanceQueryModel(BaseModel):
+    email: str  # emails are returned as ****
+    affiliation: str
+    createdAt: datetime
+    updatedAt: datetime
+
+
+class ProjectQueryModel(BaseModel):
+    iemap_id: str
+    provenance: ProvenanceQueryModel
+    project: ProjectModel
+    process: ProcessModel
+    material: MaterialModel
+    parameters: List[ParameterModel]
+    properties: List[PropertyModel]
+    files: List[FileModel] = None
