@@ -3,7 +3,8 @@ import httpx
 from pydantic import TypeAdapter, ValidationError
 from typing import Optional, Dict, Any, Union, List
 from iemap_mi.models import (ProjectResponse, CreateProjectRequest, CreateProjectResponse,
-                             FlattenedProjectBase, ProjectQueryModel)
+                             ProjectQueryModel)
+from settings import settings
 from iemap_mi.utils import get_headers
 
 
@@ -13,10 +14,9 @@ class ProjectHandler:
         Initialize ProjectHandler with base URL and JWT token.
 
         Args:
-            base_url (str): Base URL for the API.
             token (Optional[str]): JWT token for authentication. Defaults to None.
         """
-        self.base_url = base_url
+
         self.token = token
 
     async def get_projects(self, page_size: int = 10, page_number: int = 1) -> ProjectResponse:
@@ -30,7 +30,7 @@ class ProjectHandler:
         Returns:
             ProjectResponse: Paginated list of projects.
         """
-        endpoint = f"{self.base_url}/api/v1/project/list/"
+        endpoint = settings.PROJECT_LIST
         params = {'page_size': page_size, 'page_number': page_number}
         headers = get_headers(self.token)
 
@@ -49,7 +49,7 @@ class ProjectHandler:
         Returns:
             CreateProjectResponse: Response containing the inserted ID of the new project.
         """
-        endpoint = f"{self.base_url}/api/v1/project/add"
+        endpoint = settings.PROJECT_ADD
         headers = get_headers(self.token)
 
         async with httpx.AsyncClient() as client:
@@ -70,7 +70,7 @@ class ProjectHandler:
         Returns:
             Dict[str, Any]: Response from the API.
         """
-        endpoint = f"{self.base_url}/api/v1/project/add/file/"
+        endpoint = settings.ADD_FILE_TO_PROJECT
         headers = get_headers(self.token)
         params = {"project_id": project_id}
         if file_name:
@@ -148,7 +148,7 @@ class ProjectHandler:
         Returns:
             ProjectQueryResponse: Query response.
         """
-        endpoint = f"{self.base_url}/api/v1/project/query/"
+        endpoint = settings.PROJECT_QUERY
         params = {
             key: value for key, value in {
                 "response_model": response_model,
