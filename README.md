@@ -8,6 +8,10 @@ Iemap-MI is a Python module that provides easy access to the IEMAP REST API. It 
 authentication, fetching paginated project data, and more. The module is designed to be used asynchronously and
 leverages `httpx` for making HTTP requests and `pydantic` for data validation.
 
+## Documentation
+
+For full documentation, visit [iemap-mi documentation](https://iemap-mi-module.readthedocs.io/en/latest/index.html).
+
 ## Features
 
 - **JWT Authentication**: Authenticate users and manage sessions with JSON Web Tokens.
