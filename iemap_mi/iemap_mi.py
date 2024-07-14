@@ -1,46 +1,27 @@
 # iemap_mi/iemap_mi.py
 import asyncio
 import logging
-from typing import Optional, Dict, Any
 import httpx
+from typing import Optional, Dict, Any
 from pydantic import HttpUrl
 from iemap_mi.project_handler import ProjectHandler
 from iemap_mi.iemap_stat import IemapStat
-from iemap_mi.utils import get_headers
 from iemap_mi.__version__ import __version__
+from iemap_mi.settings import settings
 
 
 class IemapMI:
-    def __init__(self, base_url: HttpUrl = 'https://iemap.enea.it/rest') -> None:
+    def __init__(self) -> None:
         """
         Initialize IemapMI with base URL.
 
         Args:
             base_url (HttpUrl): Base URL for the API.
         """
-        self.base_url = base_url
+
         self.token: Optional[str] = None
-        self.project_handler = ProjectHandler(base_url, self.token)
-        self.stat_handler = IemapStat(base_url, self.token)
-
-    async def _get(self, endpoint: str, params: Optional[Dict[str, Any]] = None) -> Any:
-        """
-        Make a GET request to the specified endpoint.
-
-        Args:
-            endpoint (str): API endpoint to make the GET request to.
-            params (Optional[Dict[str, Any]]): Query parameters for the request. Defaults to None.
-
-        Returns:
-            Any: Response from the GET request.
-        """
-        url = f"{self.base_url}/{endpoint}"
-        headers = get_headers(self.token)
-
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, headers=headers, params=params)
-            response.raise_for_status()
-            return response.json()
+        self.project_handler = ProjectHandler(self.token)
+        self.stat_handler = IemapStat(self.token)
 
     async def authenticate(self, username: str, password: str) -> None:
         """
@@ -50,15 +31,14 @@ class IemapMI:
                username (str): Username for authentication.
                password (str): Password for authentication.
            """
-        endpoint = 'auth/jwt/login'
-        url = f"{self.base_url}/{endpoint}"
+        endpoint = settings.AUTH_JWT_LOGIN
         data = {
             'username': username,
             'password': password
         }
 
         async with httpx.AsyncClient() as client:
-            response = await client.post(url, data=data)
+            response = await client.post(endpoint, data=data)
             response.raise_for_status()
             self.token = response.json().get('access_token')
             # Update the token in the project and stat handlers
@@ -85,4 +65,3 @@ class IemapMI:
         Print the version of the IemapMI module.
         """
         print(f"IemapMI version: {__version__}")
-
