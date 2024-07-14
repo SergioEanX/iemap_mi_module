@@ -3,7 +3,6 @@ import asyncio
 import logging
 import httpx
 from typing import Optional, Dict, Any
-from pydantic import HttpUrl
 from iemap_mi.project_handler import ProjectHandler
 from iemap_mi.iemap_stat import IemapStat
 from iemap_mi.__version__ import __version__
@@ -11,6 +10,21 @@ from iemap_mi.settings import settings
 
 
 class IemapMI:
+    """
+IemapMI is a class designed to interact with the Iemap Management Interface (IEMI) API.
+It provides functionalities to authenticate users, handle projects, and gather statistical data.
+
+Attributes:
+    token (Optional[str]): JWT token for authenticated API access. Initially None until authentication.
+    project_handler (ProjectHandler): Handles project-related operations.
+    stat_handler (IemapStat): Handles statistical data operations.
+
+Methods:
+    __init__: Initializes the IemapMI instance with default values.
+    authenticate: Authenticates a user with the IEMI API and stores the JWT token.
+    handle_exception: Static method to handle exceptions in asyncio event loops.
+    print_version: Static method to print the version of the IemapMI module.
+"""
     def __init__(self) -> None:
         """
         Initialize IemapMI with base URL.
