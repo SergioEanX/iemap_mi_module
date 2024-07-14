@@ -12,4 +12,8 @@ python:
   install:
     - requirements: docs/source/requirements.txt
 
-requirements_file: docs/source/requirements.txt
+build:
+  jobs:
+    pre_build:
+      - pip install poetry
+      - poetry install
