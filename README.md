@@ -1,5 +1,4 @@
-![Project Logo](images/logo_iemap.png)
-
+![Project Logo](https://github.com/SergioEanX/iemap_mi_module/blob/master/images/logo_iemap.png?raw=True)
 # Iemap-MI Python Module
 
 [![PyPI version](https://badge.fury.io/py/iemap-mi.svg)](https://badge.fury.io/py/iemap-mi)
