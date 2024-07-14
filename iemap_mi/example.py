@@ -8,6 +8,7 @@ from iemap_mi.models import (CreateProjectRequest, Project, Material, Process, A
                              Parameter, Property, FlattenedProjectBase, FlattenedProjectHashEmail)
 from iemap_mi.utils import flatten_project_data
 
+
 try:
     import pandas as pd
 
@@ -78,11 +79,19 @@ async def main():
     IemapMI.print_version()
 
     # Iterate over projects and print them or convert to pandas DataFrame if available
-    await iterate_projects(client, page_size=60, show_email=False)
+    # await iterate_projects(client, page_size=60, show_email=False)
 
     # Fetch statistics data
     stats = await client.stat_handler.get_stats()
     print(stats.model_dump())
+
+    query_response = await client.project_handler.query_projects(
+        # project_name="Materials for Batteries",
+        isExperiment=True,
+        limit=10
+    )
+
+    print(query_response)
 
     # Prompt for username and password
     username = input("Enter your username (email address): ")
