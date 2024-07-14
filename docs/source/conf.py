@@ -3,8 +3,8 @@ import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
 project = 'iemap-mi'
-author = 'Sergio Ferlito'
-release = '0.1.0'
+author = 'Your Name'
+release = '0.1.6'
 
 extensions = [
     'sphinx.ext.autodoc',
