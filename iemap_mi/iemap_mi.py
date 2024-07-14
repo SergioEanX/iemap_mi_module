@@ -6,7 +6,6 @@ import httpx
 from pydantic import HttpUrl
 from iemap_mi.project_handler import ProjectHandler
 from iemap_mi.iemap_stat import IemapStat
-from iemap_mi.models import AuthData
 from iemap_mi.utils import get_headers
 from iemap_mi.__version__ import __version__
 
@@ -87,13 +86,3 @@ class IemapMI:
         """
         print(f"IemapMI version: {__version__}")
 
-    # async def get_example_data(self) -> Any:
-    #     """
-    #     Get example data from a specific endpoint.
-    #
-    #     Returns:
-    #         Any: Example data from the specified endpoint.
-    #     """
-    #     endpoint = 'example_endpoint'
-    #     params = {'key': 'value'}
-    #     return await self._get(endpoint, params)
