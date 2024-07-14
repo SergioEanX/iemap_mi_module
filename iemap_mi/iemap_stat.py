@@ -2,18 +2,19 @@ from typing import Optional, Dict, Any
 import httpx
 from iemap_mi.models import StatsResponse
 from iemap_mi.utils import get_headers
+from iemap_mi.settings import settings
 
 
 class IemapStat:
-    def __init__(self, base_url: str, token: Optional[str] = None) -> None:
+    def __init__(self, token: Optional[str] = None) -> None:
         """
         Initialize IemapStat with base URL and JWT token.
 
         Args:
-            base_url (str): Base URL for the API.
+
             token (Optional[str]): JWT token for authentication. Defaults to None.
         """
-        self.base_url = base_url
+
         self.token = token
 
     async def get_stats(self) -> StatsResponse:
@@ -23,7 +24,7 @@ class IemapStat:
         Returns:
             StatsResponse: Response containing statistics data.
         """
-        endpoint = f"{self.base_url}/api/v1/stats"
+        endpoint = settings.STATS
         headers = get_headers(self.token)
 
         async with httpx.AsyncClient() as client:
