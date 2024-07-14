@@ -6,7 +6,7 @@ class APISettings:
     AUTH_JWT_LOGIN = f"{BASE_URL}/api/v1/auth/jwt/login"
     PROJECT_LIST = f"{BASE_URL}/api/v1/project/list"
     PROJECT_ADD = f"{BASE_URL}/api/v1/project/add"
-    PROJECT_QUERY = f"{BASE_URL}/api/v1/project/query"
+    PROJECT_QUERY = f"{BASE_URL}/api/v1/project/query/"
     ADD_FILE_TO_PROJECT = f"{BASE_URL}/api/v1/project/add/file"
     STATS = f"{BASE_URL}/api/v1/stats"
 
