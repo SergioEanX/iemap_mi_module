@@ -87,13 +87,13 @@ class IemapMI:
         """
         print(f"IemapMI version: {__version__}")
 
-    async def get_example_data(self) -> Any:
-        """
-        Get example data from a specific endpoint.
-
-        Returns:
-            Any: Example data from the specified endpoint.
-        """
-        endpoint = 'example_endpoint'
-        params = {'key': 'value'}
-        return await self._get(endpoint, params)
+    # async def get_example_data(self) -> Any:
+    #     """
+    #     Get example data from a specific endpoint.
+    #
+    #     Returns:
+    #         Any: Example data from the specified endpoint.
+    #     """
+    #     endpoint = 'example_endpoint'
+    #     params = {'key': 'value'}
+    #     return await self._get(endpoint, params)
