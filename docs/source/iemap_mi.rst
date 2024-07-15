@@ -4,13 +4,7 @@ iemap\_mi package
 Submodules
 ----------
 
-iemap\_mi.example module
-------------------------
 
-.. automodule:: iemap_mi.example
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 
 iemap\_mi.iemap\_mi module
