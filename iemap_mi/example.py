@@ -6,6 +6,7 @@ from iemap_mi import IemapMI
 from typing import List, Union
 from iemap_mi.models import (CreateProjectRequest, Project, Material, Process, Agent,
                              Parameter, Property, FlattenedProjectBase, FlattenedProjectHashEmail)
+from iemap_mi.project_handler import ProjectHandler
 from iemap_mi.utils import flatten_project_data
 
 try:
@@ -91,7 +92,107 @@ async def main():
     password = stdiomask.getpass(prompt="Enter your password: ")
 
     # Authenticate to get the JWT token
+    # ATTENTION: you should register to the IEMAP platform to get your credentials (that has to be validated)
+    # To do so, please visit: https://iemap.enea.it/auth/signup
+
     await client.authenticate(username=username, password=password)
+
+    # Define the project metadata, for example:
+    data = {
+        "project": {
+            "name": "Materials for Batteries",
+            "label": "MB",
+            "description": "IEMAP - eco-sustainable synthesis of ionic liquids as innovative solvents for lithium/sodium batteries"
+        },
+        "material": {
+            "formula": "C11H20N2F6S2O4"
+        },
+        "process": {
+            "method": "Karl-Fischer titration",
+            "agent": {
+                "name": "Karl-Fischer titrator Mettler Toledo",
+                "version": None
+            },
+            "isExperiment": True
+        },
+        "parameters": [
+            {
+                "name": "time",
+                "value": 20,
+                "unit": "s"
+            },
+            {
+                "name": "weight",
+                "value": 0.5,
+                "unit": "gr"
+            }
+        ],
+        "properties": [
+            {
+                "name": "Moisture content",
+                "value": "<2",
+                "unit": "ppm"
+            }
+        ]
+    }
+
+    # Build and validate the project payload
+    valid_payload_example_1 = ProjectHandler.build_project_payload(data)
+
+    if valid_payload_example_1:
+        print("Payload is valid and ready to be submitted.")
+    else:
+        print("Payload is invalid.")
+
+    # Example of invalid payload
+    data_invalid = {"project": {
+        "name": "Materials for Batteries",
+        "label": "MB",
+        # "description": Description is missing this is  a required field !!!
+    },
+        # material is missing and this is a required field !!!!
+        # "material": {
+        #     "formula": "C11H20N2F6S2O4"
+        # },
+        "process": {
+            "method": "Karl-Fischer titration",
+            "agent": {
+                "name": "Karl-Fischer titrator Mettler Toledo",
+                "version": None
+            },
+            "isExperiment": True
+        }}
+    # Also missing are parameters and properties, which are required fields
+
+    # Build and validate the project payload
+    # as the payload is invalid, the function will return None and print the error message that caused the payload to be invalid
+    # in this case, the error message is:
+    #
+    # Validation Error: The provided data is not valid.
+    # Error in field 'project.description': Field required (type: missing)
+    # Error in field 'material': Field required (type: missing)
+    # Error in field 'parameters': Field required (type: missing)
+    # Error in field 'properties': Field required (type: missing)
+
+    valid_payload_example_2 = ProjectHandler.build_project_payload(data_invalid)
+
+    if valid_payload_example_2:
+        print("Payload from 'data_invalid' is valid and ready to be submitted.")
+    else:
+        print("Payload from 'data_invalid' is invalid.")
+
+    if valid_payload_example_1:
+        # Create a new project
+        new_project = await client.project_handler.create_project(valid_payload_example_1)
+        print(new_project)
+
+        # Add a file to the project
+        file_response = await client.project_handler.add_file_to_project(
+            project_id=new_project.inserted_id,
+            file_path="/path/to/your/file.pdf",
+            file_name="file.pdf"
+        )
+        print(file_response)
 
     # Create a new project
     project_data = CreateProjectRequest(
