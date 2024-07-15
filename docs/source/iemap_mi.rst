@@ -1,10 +1,6 @@
 iemap\_mi package
 =================
 
-Submodules
-----------
-
-
 
 
 iemap\_mi.iemap\_mi module
