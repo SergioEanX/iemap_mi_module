@@ -193,3 +193,74 @@ class ProjectHandler:
         except ValidationError as e:
             print("Validation error occurred:")
             print(e.json(indent=4))
+
+    @staticmethod
+    def build_project_payload(data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Build and validate a JSON payload for the "/api/v1/project/add" endpoint.
+
+        This method constructs a JSON payload for creating a new project, applies
+        Pydantic validation, and provides easy-to-read error messages in case of validation failures.
+
+        Args:
+            data (Dict[str, Any]): A dictionary containing the project details.
+
+        Returns:
+            Dict[str, Any]: A validated dictionary representation of the project payload.
+                            Returns an empty dictionary if validation fails.
+
+        Raises:
+            ValidationError: If the provided data is not valid according to the Pydantic model.
+
+        Example:
+            >>> data = {
+            ...     "project": {
+            ...         "name": "Materials for Batteries",
+            ...         "label": "MB",
+            ...         "description": "IEMAP - eco-sustainable synthesis of ionic liquids as innovative solvents for lithium/sodium batteries"
+            ...     },
+            ...     "material": {
+            ...         "formula": "C11H20N2F6S2O4"
+            ...     },
+            ...     "process": {
+            ...         "method": "Karl-Fischer titration",
+            ...         "agent": {
+            ...             "name": "Karl-Fischer titrator Mettler Toledo",
+            ...             "version": None
+            ...         },
+            ...         "isExperiment": True
+            ...     },
+            ...     "parameters": [
+            ...         {
+            ...             "name": "time",
+            ...             "value": 20,
+            ...             "unit": "s"
+            ...         },
+            ...         {
+            ...             "name": "weight",
+            ...             "value": 0.5,
+            ...             "unit": "gr"
+            ...         }
+            ...     ],
+            ...     "properties": [
+            ...         {
+            ...             "name": "Moisture content",
+            ...             "value": "<2",
+            ...             "unit": "ppm"
+            ...         }
+            ...     ]
+            ... }
+            >>> valid_payload = ProjectHandler.build_project_payload(data)
+            >>> if valid_payload:
+            ...     print("Payload is valid and ready to be submitted.")
+            ... else:
+            ...     print("Payload is invalid.")
+        """
+        try:
+            project_request = CreateProjectRequest(**data)
+            return project_request.dict()
+        except ValidationError as e:
+            print("Validation Error: The provided data is not valid.")
+            for error in e.errors():
+                print(f"Error in field '{'.'.join(map(str, error['loc']))}': {error['msg']} (type: {error['type']})")
+            return {}
