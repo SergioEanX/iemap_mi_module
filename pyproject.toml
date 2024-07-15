@@ -19,6 +19,7 @@ stdiomask = "^0.0.6"
 
 [tool.poetry.dev-dependencies]
 sphinx = "^7.3.7"
+sphinx_sitemap = "^2.6.0"
 sphinx_rtd_theme = "^1.0.0"
 sphinx-autodoc-typehints = "^2"
 
