@@ -2,7 +2,7 @@ import logging
 import httpx
 from pydantic import TypeAdapter, ValidationError
 from typing import Optional, Dict, Any, Union, List
-from iemap_mi.models import (ProjectResponse, CreateProjectRequest, CreateProjectResponse,
+from iemap_mi.models import (ProjectResponse, IEMAPProject, CreateProjectResponse,
                              ProjectQueryModel)
 from iemap_mi.settings import settings
 from iemap_mi.utils import get_headers
@@ -39,12 +39,12 @@ class ProjectHandler:
             response.raise_for_status()
             return ProjectResponse(**response.json())
 
-    async def create_project(self, project_data: CreateProjectRequest) -> CreateProjectResponse:
+    async def create_project(self, project_data: IEMAPProject) -> CreateProjectResponse:
         """
         Create a new project.
 
         Args:
-            project_data (CreateProjectRequest): Data for the new project.
+            project_data (IEMAPProject): Data for the new project.
 
         Returns:
             CreateProjectResponse: Response containing the inserted ID of the new project.
@@ -257,7 +257,7 @@ class ProjectHandler:
             ...     print("Payload is invalid.")
         """
         try:
-            project_request = CreateProjectRequest(**data)
+            project_request = IEMAPProject(**data)
             return project_request.dict()
         except ValidationError as e:
             print("Validation Error: The provided data is not valid.")
