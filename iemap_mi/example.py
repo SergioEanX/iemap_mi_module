@@ -1,14 +1,34 @@
+# This is an example script that demonstrates how to use the iemap-mi Python module.
+# If not yet install then you can install the module by running the following command:
+# pip install iemap-mi
+
+# Import the required modules
+# asyncio is used to run the main function asynchronously
 import asyncio
-# import getpass
+# stdiomask is used to hide the password input
 import stdiomask
+# TypeAdapter is used to validate the project data
 from pydantic import TypeAdapter
+# Import the IemapMI class from the iemap_mi module
 from iemap_mi import IemapMI
-from typing import List, Union
-from iemap_mi.models import (CreateProjectRequest, Project, Material, Process, Agent,
-                             Parameter, Property, FlattenedProjectBase, FlattenedProjectHashEmail)
+# typing is used to define the type hints
+from typing import List
+# Import the required models from the iemap_mi module
+from iemap_mi.models import (IEMAPProject, Project, Material, Process, Agent,
+                             Parameter, Property, FlattenedProjectBase, FlattenedProjectHashEmail, FileInfo)
+
+# Import the ProjectHandler class from the iemap_mi module to handle project data tasks as:
+# - Create a new project
+# - Add a file to a project
 from iemap_mi.project_handler import ProjectHandler
+
+# Import the flatten_project_data function from the iemap_mi.utils module to easily flatten project data for display
 from iemap_mi.utils import flatten_project_data
 
+# Check if pandas and tqdm are available,
+# and set the corresponding flags
+# pandas is used to display the project data in a DataFrame (if pandas is available)
+# tqdm is used to display a progress bar while fetching projects (if tqdm is available)
 try:
     import pandas as pd
 
@@ -24,8 +44,40 @@ except ImportError:
     TQDM_AVAILABLE = False
 
 
-async def iterate_projects(client: IemapMI, page_size: int = 40, show_email: bool = False) -> None:
-    """Iterate over projects and print them or convert to pandas DataFrame if available."""
+# Define the iterate_projects function
+# this function shows how to fetch projects in pages and display them in a pandas DataFrame
+# similar functions can be created to fetch other data, this is just an example
+# executed later in the main function
+async def iterate_projects(client: IemapMI, page_size: int = 40) -> None:
+    """
+        Iterates over projects in the Iemap Management Interface (IEMI) and prints them,
+        or converts to a pandas DataFrame if pandas is available.
+
+        This function fetches projects in pages, with each page containing up to `page_size` projects.
+        It can optionally include email addresses in the output if `show_email` is True and the user has
+        the necessary permissions.
+
+        Parameters:
+        - client (IemapMI): An authenticated instance of IemapMI used to fetch project data.
+        - page_size (int): The number of projects to fetch per page. Defaults to 40.
+
+        Returns:
+        None. The function directly prints project information to the console or displays it in a pandas DataFrame.
+
+        Usage Example:
+        ```python
+        import asyncio
+        from iemap_mi import IemapMI
+
+        async def main():
+            client = IemapMI()
+            await client.authenticate(username="your_username", password="your_password")
+            await iterate_projects(client, page_size=50)
+
+        if __name__ == "__main__":
+            asyncio.run(main())
+        ```
+        """
     page_number = 1
     all_projects: List[FlattenedProjectBase] = []
     total_projects = None  # Initialize total_projects to None
@@ -35,10 +87,7 @@ async def iterate_projects(client: IemapMI, page_size: int = 40, show_email: boo
         if not projects_response.data:
             break
 
-        if show_email:
-            adapter = TypeAdapter(FlattenedProjectBase)
-        else:
-            adapter = TypeAdapter(FlattenedProjectHashEmail)
+        adapter = TypeAdapter(FlattenedProjectHashEmail)
 
         projects = [adapter.validate_python(project) for project in projects_response.data]
 
@@ -65,6 +114,13 @@ async def iterate_projects(client: IemapMI, page_size: int = 40, show_email: boo
             print(project.model_dump())
 
 
+# Define the main function
+# This function demonstrates how to use the IemapMI module to interact with the IEMAP API
+# It includes examples of:
+# - Authenticating a user
+# - Creating a new project
+# - Adding a file to a project
+# - Fetching statistical data from the API
 async def main():
     # Initialize the client
     client = IemapMI()
@@ -73,7 +129,7 @@ async def main():
     IemapMI.print_version()
 
     # Iterate over projects and print them or convert to pandas DataFrame if available
-    # await iterate_projects(client, page_size=60, show_email=False)
+    await iterate_projects(client, page_size=60)
 
     # Fetch statistics data
     stats = await client.stat_handler.get_stats()
@@ -91,13 +147,21 @@ async def main():
     username = input("Enter your username (email address): ")
     password = stdiomask.getpass(prompt="Enter your password: ")
 
-    # Authenticate to get the JWT token
-    # ATTENTION: you should register to the IEMAP platform to get your credentials (that has to be validated)
+    # Authenticate to get the JWT token to be used to invoke REST API endpoints
+    # !! ATTENTION: you should register to the IEMAP platform to get your credentials !!
+    # This credential that has to be validated by email sent to the user email address
     # To do so, please visit: https://iemap.enea.it/auth/signup
 
+    # This sets a JWT token in the client instance
     await client.authenticate(username=username, password=password)
 
-    # Define the project metadata, for example:
+    # To create a new project, you need to provide the project metadata as a dictionary (JSON-like format)
+    # The project metadata should include the project name, label, description, material, process, parameters,
+    # and properties.
+    # Parameters and properties are arrays of dictionaries containing the
+    # name, value, and unit of each parameter/property.
+    # Below an example of a valid project metadata dictionary is provided
+    #
     data = {
         "project": {
             "name": "Materials for Batteries",
@@ -148,7 +212,7 @@ async def main():
     data_invalid = {"project": {
         "name": "Materials for Batteries",
         "label": "MB",
-        # "description": Description is missing this is  a required field !!!
+        # "description": Description is missing, this is  a required field !!!
     },
         # material is missing and this is a required field !!!!
         # "material": {
@@ -165,8 +229,9 @@ async def main():
     # Also missing are parameters and properties, which are required fields
 
     # Build and validate the project payload
-    # as the payload is invalid, the function will return None and print the error message that caused the payload to be invalid
-    # in this case, the error message is:
+    # as the payload is invalid, the function will return None and will
+    # print the error message that caused the payload to be invalid.
+    # In this case, the error message is:
     #
     # Validation Error: The provided data is not valid.
     # Error in field 'project.description': Field required (type: missing)
@@ -181,21 +246,17 @@ async def main():
     else:
         print("Payload from 'data_invalid' is invalid.")
 
-    if valid_payload_example_1:
-        # Create a new project
-        new_project = await client.project_handler.create_project(valid_payload_example_1)
-        print(new_project)
+    for p in [valid_payload_example_1, valid_payload_example_2]:
+        if p:
+            # Create a new project
+            current_proj = IEMAPProject(**p)
+            print(f"Adding project: {current_proj.project.name}")
+            new_project = await client.project_handler.create_project(current_proj)
+            print(new_project)
 
-        # Add a file to the project
-        file_response = await client.project_handler.add_file_to_project(
-            project_id=new_project.inserted_id,
-            file_path="/path/to/your/file.pdf",
-            file_name="file.pdf"
-        )
-        print(file_response)
+    # Alternatively metadate can be defined using the Pydantic class CreateProjectRequest as below
 
-    # Create a new project
-    project_data = CreateProjectRequest(
+    project_data = IEMAPProject(
         project=Project(
             name="Materials for Batteries",
             label="MB",
@@ -233,20 +294,48 @@ async def main():
         ]
     )
 
+    # as previously add a new project
     new_project = await client.project_handler.create_project(project_data)
     print(new_project)
 
-    # Add a file to the project
+    # Now add a file to the newly created project
+    # to do this:
+    # 1. input file name path
+    # 2. get the file name from full path
+    # 3. use method "add_file_to_project" from "project_handler" providing the id of the newly created project (metadata only)
+    # and the file to read
+    file_to_add_to_project = input(
+        f"Please type in the full path of file to upload and associate to current project {project_data.project.name}: ")
+    file_name = file_to_add_to_project.split("/")[-1]
+    print("Adding file to project...")
+
+    # Add a file to the project.
+    # To add a file to a project,
+    # you need to provide the project ID (inserted_id) and the file path.
+    # If you already have the project ID, you can use it directly (as string).
     file_response = await client.project_handler.add_file_to_project(
         project_id=new_project.inserted_id,
-        file_path="/path/to/your/file.pdf",
-        file_name="file.pdf"
+        file_path=file_to_add_to_project,
+        file_name=file_name
     )
-    print(file_response)
+    # Check if the file was uploaded successfully
+    # If the file was uploaded successfully, the 'uploaded' key in the response will be True
+    if file_response['uploaded']:
+        file_info = FileInfo(**file_response)
+        # Print the file information
+        # The file is save onto the IEMAP FileSystem with a unique hash
+        print(f"File {file_info.file_name} uploaded successfully to project (saved as {file_info.file_hash})")
+    else:
+        print("File upload failed.")
 
-    # Fetch statistics data
+    # Finally an example of how to fetch statistics data from IEMAP DB
     client.stat_handler.get_stats()
 
+    # to view all functionalities consult documentation at
+    # https://iemap-mi-module.readthedocs.io/en/latest/iemap_mi.html
+    # Note that current module is in development and not a stable release.
 
+
+# Run the main function asynchronously
 if __name__ == "__main__":
     asyncio.run(main())
