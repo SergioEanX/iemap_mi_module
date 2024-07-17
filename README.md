@@ -4,9 +4,10 @@
 [![PyPI version](https://badge.fury.io/py/iemap-mi.svg)](https://badge.fury.io/py/iemap-mi)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Iemap-MI is a Python module that provides easy access to the IEMAP REST API. It includes functionality for user
-authentication, fetching paginated project data, and more. The module is designed to be used asynchronously and
-leverages `httpx` for making HTTP requests and `pydantic` for data validation.
+Iemap-MI is a Python module that provides easy access to the IEMAP REST API.   
+It includes functionality for user authentication, fetching paginated project data, and more.    
+The module is designed to be used asynchronously and leverages `httpx` for making HTTP requests   
+and `pydantic` for data validation.
 
 ## Documentation
 
@@ -15,9 +16,11 @@ For full documentation, visit [iemap-mi documentation](https://iemap-mi-module.r
 ## Features
 
 - **JWT Authentication**: Authenticate users and manage sessions with JSON Web Tokens.
-- **Project Data**: Fetch paginated project data from the API.
+- **Project Data**: Fetch paginated project data from the API. Add new projects metadata, add file, and more.
 - **Asynchronous Requests**: Utilize `httpx` for efficient, asynchronous HTTP requests.
 - **Data Validation**: Ensure data integrity with `pydantic` models.
+- **Graph neural networks (GNNs) to predict formation energy of inorganic materials**: Not yet implemented. Stay tuned!
+- **Semantic search**: Not yet implemented. Stay tuned!
 
 ## Installation
 
@@ -32,49 +35,188 @@ Alternatively, you can install it using pip:
 ```sh
 
 pip install iemap-mi
+
 ```
+
+## Note on IEMAP Projects metadata
+
+Projects on IEMAP platform are stored as:
+
+- **General project metadata** with a predefined schema
+- **Files related to project** (allowed extensions are: csv, pdf, doc, docx, cls, xlsx, dat, in, cif)
+
+Project metadata are stored onto MongoDB (and are searchable) while files are stored onto Ceph FS.   
+The metadata schema is the following:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "label"
+      ]
+    },
+    "material": {
+      "type": "object",
+      "properties": {
+        "formula": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "formula"
+      ]
+    },
+    "process": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "agent": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "isExperiment": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "method",
+        "agent",
+        "isExperiment"
+      ]
+    },
+    "parameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "value",
+          "unit"
+        ]
+      }
+    },
+    "properties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "value",
+          "unit"
+        ]
+      }
+    }
+  },
+  "required": [
+    "project",
+    "material",
+    "process",
+    "parameters",
+    "properties"
+  ]
+}
+
+```
+
+Pydantic class `IEMAPProject` is provided to easily build and validate project metadata.   
+For more information and usage example view `examples.py`.   
+Alternatively, you can use `ProjectHandler.build_project_payload()` method to build a project payload from a Python
+dictionary.
 
 ## Usage
 
-Here are some examples of how to use the iemap-mi module.
+This module allows you to interact integrate into your workflow the IEMAP platform.
+Data to store on IEMAP platform are stored as projects metadata and files,    
+this means that you can store metadata and files related to your projects.
+Steps required to use the module are:
+
+1. Initialize the client
+2. Authenticate (to get the JWT token used for subsequent requests). To register an account
+   visit [IEMAP](https://iemap.enea.it).
+3. Store metadata for your project
+4. Store files related to your project
+5. Retrieve/Query project data
+
+**Note**: The module is designed to be used asynchronously,    
+so you should use `async` functions and `await` for making requests.
+A quick introduction to asynchronous programming in Python can be found [here](https://realpython.com/async-io-python/).
+
+**Note**:    
+IEMAP platform is a service provided by **ENEA**,    
+the Italian National Agency for New Technologies,   
+Energy and Sustainable Economic Development within the Project IEMAP (see [details](https://iemap.enea.it/)).
+
+Here are some brief examples of how to use the iemap-mi module.
 
 ### Initialize the Client and Authenticate
 
-```python
-
-import asyncio
-from iemap_mi.iemap_mi import IemapMI
-
-
-async def main():
-
-
-# Initialize the client
-client = IemapMI()
-
-# Authenticate to get the JWT token
-await client.authenticate(username='your_username', password='your_password')
-
-# Fetch example data
-data = await client.get_example_data()
-print(data)
-
-if __name__ == "__main__":
-    asyncio.run(main())
-```
 
 ### Fetch Paginated Project Data
 
 ```python
-
+# import necessary modules
 import asyncio
 from iemap_mi.iemap_mi import IemapMI
 
 
+# define an async main function
 async def main():
 
 
-# Initialize the client
+# Initialize IEMAP client
 client = IemapMI()
 
 # Authenticate to get the JWT token
@@ -84,6 +226,7 @@ await client.authenticate(username='your_username', password='your_password')
 projects = await client.project_handler.get_projects(page_size=10, page_number=1)
 print(projects)
 
+# Run the main function asynchronously
 if __name__ == "__main__":
     asyncio.run(main())
 ```
@@ -128,23 +271,10 @@ Acknowledgements
 
 Contact
 
-For any questions or inquiries, please contact iemap.support@enea.it.
+For any questions or inquiries, please contact **iemap.support@enea.it**.
 
-```typescript
-This`README.md`
-includes
-an
-overview
-of
-the
-project, installation
-instructions,
-    usage
-examples, testing
-guidelines, contribution
-guidelines, license
-information,
-    acknowledgements, and
-contact
-information.
+```plaintext
+This`README.md` includes an overview of the project, installation instructions,
+usage examples, testing guidelines, contribution guidelines, license information,
+acknowledgements, and contact information.
 ```
