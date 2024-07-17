@@ -157,7 +157,7 @@ class Material(BaseModel):
     formula: str
 
 
-class CreateProjectRequest(BaseModel):
+class IEMAPProject(BaseModel):
     """
     Represents the request data to create a new project.
 
@@ -263,6 +263,14 @@ class FileModel(BaseModel):
     size: Union[str, float]
     createdAt: datetime
     updatedAt: datetime
+
+
+class FileInfo(BaseModel):
+    file_hash: str
+    file_name: str
+    file_size: str
+    uploaded: bool
+
 
 
 class PropertyModel(BaseModel):
