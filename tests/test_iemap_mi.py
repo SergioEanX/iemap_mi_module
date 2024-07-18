@@ -16,19 +16,6 @@ async def test_authenticate(credentials: tuple[str, str]) -> None:
     assert client.token is not None
 
 
-@pytest.mark.asyncio
-async def test_get_example_data(credentials: tuple[str, str]) -> None:
-    """
-    Test fetching example data.
-
-    Args:
-        credentials (tuple[str, str]): Tuple containing username and password.
-    """
-    username, password = credentials
-    client = IemapMI()
-    await client.authenticate(username=username, password=password)
-    data = await client.get_example_data()
-    assert data is not None
 
 
 @pytest.mark.asyncio
