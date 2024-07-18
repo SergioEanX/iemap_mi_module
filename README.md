@@ -174,7 +174,14 @@ The metadata schema is the following:
 Pydantic class `IEMAPProject` is provided to easily build and validate project metadata.   
 For more information and usage example view `examples.py`.   
 Alternatively, you can use `ProjectHandler.build_project_payload()` method to build a project payload from a Python
-dictionary.
+dictionary.   
+**[IEMAP website](https://iemap.enea.it)** provides a user-friendly interface to interact with IEMAP platform,      
+including the ability to add new projects, search for existing projects, and more.   
+**In IEMAP website, projects metadata are defined compiling an Excel file (a template ready to use is provided) with the
+required fields**,       
+this data are converted into a JSON object that is used to store the project metadata on the platform,   
+similarly to the schema above.    
+In a second step, files related to the project can be uploaded, always using the UI provided by IEMAP website.
 
 ## Usage
 
