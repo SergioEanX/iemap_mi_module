@@ -11,7 +11,11 @@ and `pydantic` for data validation.
 
 ## Documentation
 
-For full documentation, visit [iemap-mi documentation](https://iemap-mi-module.readthedocs.io/en/latest/index.html).
+For full documentation, visit [iemap-mi documentation](https://iemap-mi-module.readthedocs.io/en/latest/index.html).   
+For a full working example, see `examples.py` (create metadata for a new project, add project to IEMAP platform, add
+files to project, query data) inside iemap_mi folder.
+Full documentation for REST API endpoint is available at   
+[IEMAP-MI REST API Swagger generated documentation](https://iemap.enea.it/rest/docs).
 
 ## Features
 
