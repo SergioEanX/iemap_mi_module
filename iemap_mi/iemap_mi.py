@@ -5,6 +5,7 @@ import httpx
 from typing import Optional, Dict, Any
 from iemap_mi.project_handler import ProjectHandler
 from iemap_mi.iemap_stat import IemapStat
+from iemap_mi.ai_handler import AIHandler
 from iemap_mi.__version__ import __version__
 from iemap_mi.settings import settings
 
@@ -36,6 +37,7 @@ Methods:
         self.token: Optional[str] = None
         self.project_handler = ProjectHandler(self.token)
         self.stat_handler = IemapStat(self.token)
+        self.ai_handler = AIHandler()
 
     async def authenticate(self, username: str, password: str) -> None:
         """
