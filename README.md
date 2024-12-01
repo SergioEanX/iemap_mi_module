@@ -23,8 +23,19 @@ Full documentation for REST API endpoint is available at
 - **Project Data**: Fetch paginated project data from the API. Add new projects metadata, add file, and more.
 - **Asynchronous Requests**: Utilize `httpx` for efficient, asynchronous HTTP requests.
 - **Data Validation**: Ensure data integrity with `pydantic` models.
-- **Graph neural networks (GNNs) to predict formation energy of inorganic materials**: Not yet implemented. Stay tuned!
+- **AI functionalities based on a Graph neural networks (GNNs)**: aiding in the discovery and design of new battery
+  materials
 - **Semantic search**: Not yet implemented. Stay tuned!
+
+## AI Model
+
+The geoCGNN model is inspired by the research paper published in Nature Communications:   
+"Crystal Graph Convolutional Neural Networks for Analyzing Materials Properties"   
+(https://www.nature.com/articles/s43246-021-00194-3).
+
+**This model has been further trained and optimized by ENEA on the High-Performance Computing (HPC)   
+infrastructure CRESCO (https://ict.enea.it/cresco/) to predict formation energy and redox potential,   
+aiding in the discovery and design of new battery materials.**
 
 ## Installation
 
