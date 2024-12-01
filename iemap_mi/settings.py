@@ -8,6 +8,7 @@ class APISettings:
     PROJECT_ADD = f"{BASE_URL}/api/v1/project/add"
     PROJECT_QUERY = f"{BASE_URL}/api/v1/project/query/"
     ADD_FILE_TO_PROJECT = f"{BASE_URL}/api/v1/project/add/file/"
+    AI_GEOCGNN = f"{BASE_URL}/api/v1/ai/"
     STATS = f"{BASE_URL}/api/v1/stats"
 
     # Add other endpoints as needed
