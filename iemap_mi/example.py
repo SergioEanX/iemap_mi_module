@@ -25,6 +25,12 @@ from iemap_mi.project_handler import ProjectHandler
 # Import the flatten_project_data function from the iemap_mi.utils module to easily flatten project data for display
 from iemap_mi.utils import flatten_project_data
 
+# Import the PredictionType enumeration to use it in the get_prediction function
+from iemap_mi.ai_handler import PredictionType
+
+# to pretty print the output of JSON responses
+from pprint import pprint
+
 # Check if pandas and tqdm are available,
 # and set the corresponding flags
 # pandas is used to display the project data in a DataFrame (if pandas is available)
@@ -128,6 +134,33 @@ async def main():
     # Print the module version
     IemapMI.print_version()
 
+    # Get the prediction using AI functionalities from IEMAP Platform using a geoCGNN model
+    # The geoCGNN model is inspired by the research paper published in Nature Communications:
+    # "Crystal Graph Convolutional Neural Networks for Analyzing Materials Properties"
+    # (https://www.nature.com/articles/s43246-021-00194-3).
+    # This model has been further trained and optimized by ENEA on the High-Performance Computing (HPC)
+    # infrastructure CRESCO (https://ict.enea.it/cresco/) to predict formation energy and redox potential,
+    # The prediction type can be either "formation-energy" or "redox-potential"
+    # The prediction is based on the crystal structure provided in .cif format
+    # The prediction is returned as a JSON response
+    # example CIFs can be found in the "example_cif" folder
+
+    cif_file_for_energy_prediction = "./example_cif/mp-2064.cif"
+    cif_file_for_redox_potential = "./example_cif/mp-1003402.cif"
+
+    prediction_fe = await client.ai_handler.get_prediction(cif_file_path=cif_file_for_energy_prediction,
+                                                           prediction_type=PredictionType.FORMATION_ENERGY)
+
+    print(f"Formation energy for file {cif_file_for_energy_prediction} predicted by AI model")
+    pprint(prediction_fe, indent=2)
+
+    prediction_rp = await client.ai_handler.get_prediction(cif_file_path=cif_file_for_redox_potential,
+                                                           prediction_type=PredictionType.REDOX_POTENTIAL)
+
+    print(f"Redox potential for file {cif_file_for_redox_potential} predicted by AI model")
+    pprint(prediction_rp, indent=2)
+
+
     # Iterate over projects and print them or convert to pandas DataFrame if available
     await iterate_projects(client, page_size=60)
 
@@ -137,7 +170,8 @@ async def main():
 
     query_response = await client.project_handler.query_projects(
         # project_name="Materials for Batteries",
-        isExperiment=True,
+        material_formula="C11H20N2F6S2O4",
+        # isExperiment=True,
         limit=10
     )
 
