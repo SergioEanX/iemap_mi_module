@@ -38,7 +38,7 @@ infrastructure CRESCO (https://ict.enea.it/cresco/) to predict formation energy 
 aiding in the discovery and design of new battery materials.**
 
 The training for formation energy prediction was conducted on a dataset of over 150,000 materials,    
-while the training for redox potential prediction utilized data from more than 4,000 batteries.
+while the training for redox potential prediction utilized data from more than 4,000 batteries.   
 These datasets were sourced from the Materials Project database (Materials Project),    
 with materials containing noble gas elements excluded from the training process.
 
