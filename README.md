@@ -37,15 +37,14 @@ The geoCGNN model is inspired by the research paper published in Nature Communic
 infrastructure CRESCO (https://ict.enea.it/cresco/) to predict formation energy and redox potential,   
 aiding in the discovery and design of new battery materials.**
 
-The training for formation energy prediction was conducted on a dataset of over 150,000 materials,    
-while the training for redox potential prediction utilized data from more than 4,000 batteries.<br/>      
-These datasets were sourced from the Materials Project database (Materials Project),<br/>    
-with materials containing noble gas elements excluded from the training process.<br/>
+The training for formation energy prediction was conducted on a dataset of over 150,000 materials,       
+while the training for redox potential prediction utilized data from more than 4,000 batteries.        
+These datasets were sourced from the Materials Project database (Materials Project),    
+with materials containing noble gas elements excluded from the training process.
 
-**Note**: The predicted redox potential represents the voltage change from the completely    
-discharged to the fully charged state of the battery material. Consequently, only the CIF file    
-corresponding to the completely discharged battery material was used during the   
-training and validation phases.    
+**Note**: The predicted redox potential represents the voltage change from the completely discharged    
+to the fully charged state of the battery material. Consequently, only the CIF file corresponding to    
+the completely discharged battery material was used during the training and validation phases.       
 This same format must be provided as input during the inference phase.
 
 ## Installation
