@@ -37,9 +37,9 @@ The geoCGNN model is inspired by the research paper published in Nature Communic
 infrastructure CRESCO (https://ict.enea.it/cresco/) to predict formation energy and redox potential,   
 aiding in the discovery and design of new battery materials.**
 
-In addition to the foundational concepts, the approach to redox potential prediction incorporates methodologies
-discussed in the paper    
-"Data-Driven Discovery of Redox Active Battery Materials Using Crystal Graph Neural Networks"   
+In addition to the foundational concepts,    
+the approach to redox potential prediction incorporates methodologies discussed in the paper       
+"Data-Driven Discovery of Redox Active Battery Materials Using Crystal Graph Neural Networks"      
 (Batteries, 2024, 10(12), 431; https://www.mdpi.com/2313-0105/10/12/431),    
 which provided insights into the application of CGNNs for redox-active materials.
 
