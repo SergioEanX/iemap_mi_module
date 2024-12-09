@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iemap-mi"
-version = "0.2.5"
+version = "0.2.6"
 description = "A Python module to interact with the IEMAP REST API"
 authors = ["Sergio Ferlito <sergio.ferlito@enea.it>"]
 readme = "README.md"
